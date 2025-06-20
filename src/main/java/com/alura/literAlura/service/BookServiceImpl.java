@@ -17,9 +17,9 @@ public class BookServiceImpl implements BookService{
 
     // buscar por titulo
     @Override
-    public void findBookTitle(String title) {
+    public Book findBookTitle(String title) {
 
-
+    return new Book();
     }
 
     // mostrar libros registrados

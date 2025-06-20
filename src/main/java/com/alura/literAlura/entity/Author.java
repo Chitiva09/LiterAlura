@@ -29,11 +29,11 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "authors", cascade = CascadeType.ALL)
     private List<Book> books;
 
     @Column(unique = true)
     private String name;
-    private String birthYear;
-    private String deathYear;
+    private int birthYear;
+    private int deathYear;
 }

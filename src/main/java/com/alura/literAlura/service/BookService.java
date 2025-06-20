@@ -8,7 +8,7 @@ import com.alura.literAlura.entity.Book;
 public interface BookService {
 
     // buscar por titulo
-    public void findBookTitle(String title);
+    public Book findBookTitle(String title);
 
     // mostrar libros registrados
     public void showBooks(List<Book> books);

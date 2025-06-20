@@ -5,9 +5,11 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 
-import com.alura.literAlura.entity.Book;
+import com.alura.literAlura.dto.BookDto;
+import com.alura.literAlura.dto.ResponseGutendexClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,7 +18,7 @@ public class Client {
 
     String url = "https://gutendex.com/books?";
 
-    public Book requestBook() throws IOException, JsonProcessingException, InterruptedException{
+    public List<BookDto> requestBook() throws IOException, JsonProcessingException, InterruptedException{
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -29,8 +31,8 @@ public class Client {
         String json = response.body();
         ObjectMapper mapper = new ObjectMapper();
         
-        Book book = mapper.readValue(json, Book.class);
+        ResponseGutendexClient responseGutendexClient = mapper.readValue(json, ResponseGutendexClient.class);
 
-        return book;
+        return responseGutendexClient != null ? responseGutendexClient : new ResponseGutendexClient();
     }
 }
