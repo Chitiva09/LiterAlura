@@ -1,11 +1,14 @@
 package com.alura.literAlura.mapper;
 
-import com.alura.literAlura.dto.AuthorDto;
+import com.alura.literAlura.dto.BookDto;
 import com.alura.literAlura.entity.Author;
+import org.springframework.stereotype.Component;
 
+
+@Component
 public class AuthorMapper {
 
-    public Author toEntity (AuthorDto dto) {
+    public Author toEntity (BookDto dto) {
 
         Author author = new Author();
         author.setName(dto.getName());

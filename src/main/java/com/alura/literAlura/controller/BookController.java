@@ -9,8 +9,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -19,11 +21,15 @@ public class BookController {
     @Autowired
     BookService service;
 
-    @GetMapping(value = "/libros/{title}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity <Book> findBookTitle(@PathVariable("title") String title){
+    @GetMapping(value = "/books", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity <Book> findBookTitle(@RequestParam("search") String title) throws IOException, InterruptedException {
 
-        Book books = service.findBookTitle( title);
-        return new ResponseEntity<Book>(service.findBookTitle(title), HttpStatus.OK);
+        Book books = service.findBookTitle(title);
+
+        if(books==null){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
 

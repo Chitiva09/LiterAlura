@@ -1,24 +1,26 @@
 package com.alura.literAlura.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.alura.literAlura.entity.Author;
 import com.alura.literAlura.entity.Book;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface BookService {
 
     // buscar por titulo
-    public Book findBookTitle(String title);
+    Book findBookTitle(String title) throws JsonProcessingException;
 
     // mostrar libros registrados
-    public void showBooks(List<Book> books);
+    void showBooks(List<Book> books);
 
     // mostrar autores registrados
-    public void showAuthors(List<Author> authors);
+    void showAuthors(List<Author> authors);
 
     // mostrar autores registrados en un determinado año
-    public void showAuthorsByYear(String year);
+    void showAuthorsByYear(String year);
 
     // mostrar por idioma
-    public void showBooksByLanguage(String language);
+    void showBooksByLanguage(String language);
 }
