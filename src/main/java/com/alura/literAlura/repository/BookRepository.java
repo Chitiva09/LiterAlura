@@ -12,6 +12,6 @@ import com.alura.literAlura.entity.Book;
 public interface BookRepository extends JpaRepository<Book, Long> {
 
     Book findByTitle(String title);
-
+    List<Book> findAll ();
 
 }

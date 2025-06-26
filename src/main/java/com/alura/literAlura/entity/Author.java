@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import aj.org.objectweb.asm.commons.Remapper;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class Author implements Serializable {
     private long id;
 
     @ManyToMany(mappedBy = "authors")
+    @JsonBackReference
     private List<Book> books;
 
     @Column(unique = true)

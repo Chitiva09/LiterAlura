@@ -16,10 +16,10 @@ import java.util.Map;
 @Setter
 @Component
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BookDto  {
+public class BookDto {
 
     private String title;
-    private List<Author> authors;
+    private List<AuthorDto> authors;
     @JsonProperty("summaries")
     private List<String> description;
 
@@ -27,6 +27,7 @@ public class BookDto  {
     private List<String> category;
     private List<String> languages;
     private Map<String, String> formats;
+    private String image;
 
 
     @JsonProperty("name")
@@ -35,7 +36,6 @@ public class BookDto  {
     private int birthyear;
     @JsonProperty("death_year")
     private int deathyear;
-
 
 
 }

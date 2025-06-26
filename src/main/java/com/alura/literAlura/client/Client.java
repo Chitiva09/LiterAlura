@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 public class Client {
 
 
-
     public List<BookDto> requestBook(String title) throws JsonProcessingException {
 
         String url = "https://gutendex.com/books/?search=" + title;
@@ -31,9 +30,9 @@ public class Client {
 
         HttpResponse<String> response = null;
         try {
-            response=client
-                .send(request, HttpResponse.BodyHandlers.ofString());
-        }catch (IOException | InterruptedException e){
+            response = client
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
         String json = response.body();//Guardo la respuesta en un String

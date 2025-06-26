@@ -12,6 +12,7 @@ import com.alura.literAlura.dto.GutendexResponse;
 import com.alura.literAlura.mapper.BookMapper;
 import com.alura.literAlura.repository.AuthorRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ import com.alura.literAlura.entity.Book;
 import com.alura.literAlura.repository.BookRepository;
 
 @Service
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
 
     @Autowired
     AuthorRepository authorRepository;
@@ -40,13 +41,13 @@ public class BookServiceImpl implements BookService{
 
         Book book = bookRepository.findByTitle(title);//reviso si hay un libro ya guardado en la base de datos con ese nombre
 
-        if (book !=null){
+        if (book != null) {
             return book;
         }
 
         List<BookDto> apiGutendexBook = client.requestBook(title);// guardo en la variable la información obtenida desde el client
 
-        if (apiGutendexBook.isEmpty()){
+        if (apiGutendexBook.isEmpty()) {
             return null;
         }
 
@@ -54,18 +55,17 @@ public class BookServiceImpl implements BookService{
         System.out.println("DTO recibido: " + dto);
         Book newBook = bookMapper.toEntity(dto); //transforma el dto en una entidad Book
         System.out.println("Book mapeado: " + book);
-        if (newBook == null){
+        if (newBook == null) {
             throw new IllegalArgumentException("Error: El objeto Book no se pudo crear desde el DTO");
         }
         List<Author> managedAuthors = newBook.getAuthors().stream()// Convierte la lista de autores en un Stream<Author> para procesarlos uno por uno de forma funcional
-                                                        .map(author -> authorRepository.findByName(author.getName())//Transforma cada author de la lista
-                                                                // usando una función lambda. El objetivo es asegurarse de que cada author, si ya existe se reutiliza y si no existe se guarda
-                                                                //authorRepository.findByName(author.getName()) Este metodo busca un autor por su nombre en la base de datos. devuelve un Optional<Author>
-                                                                .orElseGet(()-> authorRepository.save(author)))//Aquí es donde usamos el Optional. si el autor existe,
-                                                                //lo retorna y si no existe ejecuta la funcion lambda, que guarda elautor y devuelve el nuevo objeto persistido
-                                                        .collect(Collectors.toList());//Convierte el Stream<Author> de vuelta en una lista. Es el resultado final:
-                                                                // la lista de autores ya gestionados, guardados o encontrados.
-
+                .map(author -> authorRepository.findByName(author.getName())//Transforma cada author de la lista
+                        // usando una función lambda. El objetivo es asegurarse de que cada author, si ya existe se reutiliza y si no existe se guarda
+                        //authorRepository.findByName(author.getName()) Este metodo busca un autor por su nombre en la base de datos. devuelve un Optional<Author>
+                        .orElseGet(() -> authorRepository.save(author)))//Aquí es donde usamos el Optional. si el autor existe,
+                //lo retorna y si no existe ejecuta la funcion lambda, que guarda elautor y devuelve el nuevo objeto persistido
+                .collect(Collectors.toList());//Convierte el Stream<Author> de vuelta en una lista. Es el resultado final:
+        // la lista de autores ya gestionados, guardados o encontrados.
 
 
         newBook.setAuthors(managedAuthors);
@@ -77,7 +77,12 @@ public class BookServiceImpl implements BookService{
 
     // mostrar libros registrados
     @Override
-    public void showBooks(List<Book> books) {
+    public List<Book> showBooks() {
+        List<Book> databaseQuery = bookRepository.findAll();
+        if (databaseQuery.isEmpty()) {
+            throw new EntityNotFoundException("No hay libros guardados");
+        }
+        return databaseQuery;
     }
 
     // mostrar autores registrados

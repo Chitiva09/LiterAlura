@@ -13,7 +13,7 @@ public interface BookService {
     Book findBookTitle(String title) throws JsonProcessingException;
 
     // mostrar libros registrados
-    void showBooks(List<Book> books);
+    List<Book> showBooks();
 
     // mostrar autores registrados
     void showAuthors(List<Author> authors);
