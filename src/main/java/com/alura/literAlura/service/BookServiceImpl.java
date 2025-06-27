@@ -87,15 +87,23 @@ public class BookServiceImpl implements BookService {
 
     // mostrar autores registrados
     @Override
-    public void showAuthors(List<Author> authors) {
+    public List<Author> showAuthors() {
+    List<Author> databaseQuery = authorRepository.findAll();
+    if (databaseQuery.isEmpty()){
+        throw new EntityNotFoundException("No hay autores registrados");
+    }
+    return databaseQuery;
     }
 
     // mostrar autores registrados en un determinado año
     @Override
     public void showAuthorsByYear(String year) {
+
+
+
     }
 
-    // mostrar por idioma
+    // mostrar libros por idioma
     @Override
     public void showBooksByLanguage(String language) {
     }

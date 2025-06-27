@@ -16,7 +16,7 @@ public interface BookService {
     List<Book> showBooks();
 
     // mostrar autores registrados
-    void showAuthors(List<Author> authors);
+    List<Author> showAuthors();
 
     // mostrar autores registrados en un determinado año
     void showAuthorsByYear(String year);

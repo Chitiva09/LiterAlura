@@ -2,9 +2,11 @@ package com.alura.literAlura.client;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 
@@ -20,8 +22,8 @@ public class Client {
 
 
     public List<BookDto> requestBook(String title) throws JsonProcessingException {
-
-        String url = "https://gutendex.com/books/?search=" + title;
+        String encodeTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);//Esto convierte el titulo en algo seguro y manejable para usar en la url
+        String url = "https://gutendex.com/books/?search=" + encodeTitle;
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
