@@ -4,6 +4,7 @@ import com.alura.literAlura.dto.AuthorDto;
 import com.alura.literAlura.dto.BookDto;
 import com.alura.literAlura.entity.Author;
 import com.alura.literAlura.entity.Book;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

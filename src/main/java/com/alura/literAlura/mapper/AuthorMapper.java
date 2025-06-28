@@ -1,7 +1,6 @@
 package com.alura.literAlura.mapper;
 
 import com.alura.literAlura.dto.AuthorDto;
-import com.alura.literAlura.dto.BookDto;
 import com.alura.literAlura.entity.Author;
 import org.springframework.stereotype.Component;
 

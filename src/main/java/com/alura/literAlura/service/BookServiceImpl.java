@@ -1,19 +1,17 @@
 package com.alura.literAlura.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.alura.literAlura.client.Client;
+import com.alura.literAlura.dto.AuthorDto;
 import com.alura.literAlura.dto.BookDto;
-import com.alura.literAlura.dto.GutendexResponse;
+import com.alura.literAlura.mapper.AuthorMapper;
 import com.alura.literAlura.mapper.BookMapper;
 import com.alura.literAlura.repository.AuthorRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.alura.literAlura.entity.Author;
@@ -21,19 +19,14 @@ import com.alura.literAlura.entity.Book;
 import com.alura.literAlura.repository.BookRepository;
 
 @Service
+@RequiredArgsConstructor//Esta anotación de lombok reemplaza la anotación @autowired
 public class BookServiceImpl implements BookService {
 
-    @Autowired
-    AuthorRepository authorRepository;
-
-    @Autowired
-    BookRepository bookRepository;
-
-    @Autowired
-    Client client;
-
-    @Autowired
-    BookMapper bookMapper;
+    private final AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
+    private final Client client;
+    private final BookMapper bookMapper;
+    private final AuthorMapper authorMapper;
 
     // buscar por titulo
     @Override
@@ -51,10 +44,10 @@ public class BookServiceImpl implements BookService {
             return null;
         }
 
-        BookDto dto = apiGutendexBook.get(0);//toma el primer resultado.
+        BookDto dto = apiGutendexBook.getFirst();//toma el primer resultado.
         System.out.println("DTO recibido: " + dto);
         Book newBook = bookMapper.toEntity(dto); //transforma el dto en una entidad Book
-        System.out.println("Book mapeado: " + book);
+
         if (newBook == null) {
             throw new IllegalArgumentException("Error: El objeto Book no se pudo crear desde el DTO");
         }
@@ -77,35 +70,56 @@ public class BookServiceImpl implements BookService {
 
     // mostrar libros registrados
     @Override
-    public List<Book> showBooks() {
+    public List<BookDto> showBooks() {
         List<Book> databaseQuery = bookRepository.findAll();
+
         if (databaseQuery.isEmpty()) {
             throw new EntityNotFoundException("No hay libros guardados");
         }
-        return databaseQuery;
+
+        return databaseQuery.stream()
+                .map(bookMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     // mostrar autores registrados
     @Override
-    public List<Author> showAuthors() {
-    List<Author> databaseQuery = authorRepository.findAll();
-    if (databaseQuery.isEmpty()){
-        throw new EntityNotFoundException("No hay autores registrados");
-    }
-    return databaseQuery;
+    public List<AuthorDto> showAuthors() {
+        List<Author> databaseQuery = authorRepository.findAll();
+        if (databaseQuery.isEmpty()) {
+            throw new EntityNotFoundException("No hay autores registrados");
+        }
+
+        return databaseQuery.stream()
+                .map(authorMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     // mostrar autores registrados en un determinado año
     @Override
-    public void showAuthorsByYear(String year) {
+    public List<AuthorDto> showAuthorsByYear(String year) {
 
+        int tarjetYear = Integer.parseInt(year);
 
+        List<Author> authors = authorRepository.findAll();
 
+        if (authors.isEmpty()) {
+            throw new EntityNotFoundException("No hay autores registrados en ese año");
+        }
+
+        List<AuthorDto> filteredAuthors = authors.stream()
+                .map(authorMapper::toDto)
+                .filter(listAuthors -> listAuthors.getBirthyear() <= tarjetYear && listAuthors.getDeathyear() >= tarjetYear)
+                .collect(Collectors.toList());
+
+        return filteredAuthors;
     }
 
     // mostrar libros por idioma
     @Override
-    public void showBooksByLanguage(String language) {
+    public List<BookDto> showBooksByLanguage(String language) {
+
+
     }
 
 }

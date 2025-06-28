@@ -1,6 +1,7 @@
 package com.alura.literAlura.controller;
 
 
+import com.alura.literAlura.dto.AuthorDto;
 import com.alura.literAlura.dto.BookDto;
 import com.alura.literAlura.entity.Author;
 import com.alura.literAlura.entity.Book;
@@ -15,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,12 +28,6 @@ public class BookController {
 
     @Autowired
     BookService service;
-
-    @Autowired
-    AuthorMapper authorMapper;
-
-    @Autowired
-    BookMapper bookMapper;
 
     @GetMapping(value = "/books", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Book> findBookTitle(@RequestParam("search") String title) throws IOException, InterruptedException {
@@ -50,10 +44,7 @@ public class BookController {
     public ResponseEntity<?> showBooks() {
 
         try {
-            List<Book> books = service.showBooks();
-            List<BookDto> booksDto = books.stream()
-                    .map(bookMapper::toDto)
-                    .collect(Collectors.toList());
+            List<BookDto> books = service.showBooks();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Total de libros", String.valueOf(books.size()));
             return new ResponseEntity<>(books, headers, HttpStatus.OK);
@@ -64,7 +55,35 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en la base de datos");
         }
 
+    }
+
+    @GetMapping(value = "/books/showAuthors", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> showAuthors() {
+        try {
+            List<AuthorDto> authors = service.showAuthors();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Total de Autores registrados", String.valueOf(authors.size()));
+            return new ResponseEntity(authors, headers, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en la base de datos");
+        }
 
     }
+
+    @GetMapping(value = "/books/author/year", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<AuthorDto>> showAuthorsByYear(@RequestParam("year") String year) {
+        if (year == null || !year.matches("^\\d{1,4}$")) {
+            throw new IllegalArgumentException("El parámetro 'year' es inválido. Debe contener solo dígitos.");
+        }
+        List<AuthorDto> nameAuthors = service.showAuthorsByYear(year);
+        if (nameAuthors.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        }
+        return new ResponseEntity<>(nameAuthors, HttpStatus.OK);
+    }
+
 
 }
