@@ -14,15 +14,14 @@ import com.alura.literAlura.dto.BookDto;
 import com.alura.literAlura.dto.GutendexResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.catalina.LifecycleState;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Client {
 
-
+    //este metodo es el que se encarga de hacer la consulta a la api externa Gutendex
     public List<BookDto> requestBook(String title) throws JsonProcessingException {
-        String encodeTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);//Esto convierte el titulo en algo seguro y manejable para usar en la url
+        String encodeTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);//Esto convierte el título en algo seguro y manejable para usar en la url
         String url = "https://gutendex.com/books/?search=" + encodeTitle;
 
         HttpClient client = HttpClient.newHttpClient();

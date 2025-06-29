@@ -47,7 +47,7 @@ public class Book implements Serializable {
     private List<Author> authors;
     @Lob
     private String category;
-    @Lob
+    @Column(length = 500)
     private String languages;
     @Lob
     private String image;

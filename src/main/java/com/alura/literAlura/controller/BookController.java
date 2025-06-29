@@ -22,22 +22,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
+//Esta clase contiene los endpoint que se utilizaran para la comunicación entre la api y el cliente.
 @RestController
 public class BookController {
 
     @Autowired
     BookService service;
 
-    @GetMapping(value = "/books", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Book> findBookTitle(@RequestParam("search") String title) throws IOException, InterruptedException {
+    @GetMapping(value = "/books", produces = MediaType.APPLICATION_JSON_VALUE)// El value indica la asignación que se le dara a este endpoint en el url que usa el cliente
+    public ResponseEntity<BookDto> findBookTitle(@RequestParam("search") String title) throws IOException{//Al indicar que es un @RequestParam quiere decir que se utilizara esa asignacion para la busqueda
 
-        Book books = service.findBookTitle(title);
+        BookDto books = service.findBookTitle(title); //Se envía el título recibido desde la url por medio del @RequestParam al service y lo que retorna el service se guarda
+        //en una variable de tipo BookDto
 
-        if (books == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if (books == null) {//Se hace validation de que la información que retorna del service y se ha guardado en la variable book no venga vaciá
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);//En caso de que venga vaciá se enviá un error controlado al cliente
         }
-        return new ResponseEntity<>(books, HttpStatus.OK);
+        return new ResponseEntity<>(books, HttpStatus.OK);//Si todo esta bien se retorna el libro que fue encontrado por el titulo que se asigno en la url
     }
 
     @GetMapping(value = "/books/showBooks", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,7 +73,7 @@ public class BookController {
 
     }
 
-    @GetMapping(value = "/books/author/year", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/books/author", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AuthorDto>> showAuthorsByYear(@RequestParam("year") String year) {
         if (year == null || !year.matches("^\\d{1,4}$")) {
             throw new IllegalArgumentException("El parámetro 'year' es inválido. Debe contener solo dígitos.");
@@ -85,5 +86,16 @@ public class BookController {
         return new ResponseEntity<>(nameAuthors, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/books/by-language", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity <List<BookDto>> showBooksByLanguage (@RequestParam ("language") String languages){
 
+        if (languages == null || languages.isBlank() || !languages.matches("^[a-zA-Z]+$")) {
+            throw new IllegalArgumentException("El String no es valido, ingresar un lenguaje valido");
+        }
+        List<BookDto> bookLanguages = service.showBooksByLanguages(languages);
+        if (bookLanguages.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(bookLanguages, HttpStatus.OK);
+    }
 }

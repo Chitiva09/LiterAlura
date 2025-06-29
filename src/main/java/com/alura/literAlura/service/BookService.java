@@ -4,13 +4,12 @@ import java.util.List;
 
 import com.alura.literAlura.dto.AuthorDto;
 import com.alura.literAlura.dto.BookDto;
-import com.alura.literAlura.entity.Book;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface BookService {
 
     // buscar por titulo
-    Book findBookTitle(String title) throws JsonProcessingException;
+    BookDto findBookTitle(String title) throws JsonProcessingException;
 
     // mostrar libros registrados
     List<BookDto> showBooks();
@@ -22,5 +21,5 @@ public interface BookService {
     List<AuthorDto> showAuthorsByYear(String year);
 
     // mostrar por idioma
-    List<BookDto> showBooksByLanguage(String language);
+    List<BookDto> showBooksByLanguages(String languages);
 }

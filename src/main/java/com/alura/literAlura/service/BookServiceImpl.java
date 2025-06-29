@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.alura.literAlura.entity.Author;
 import com.alura.literAlura.entity.Book;
 import com.alura.literAlura.repository.BookRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor//Esta anotación de lombok reemplaza la anotación @autowired
@@ -29,13 +30,14 @@ public class BookServiceImpl implements BookService {
     private final AuthorMapper authorMapper;
 
     // buscar por titulo
+    @Transactional
     @Override
-    public Book findBookTitle(String title) throws JsonProcessingException {
+    public BookDto findBookTitle(String title) throws JsonProcessingException {
 
         Book book = bookRepository.findByTitle(title);//reviso si hay un libro ya guardado en la base de datos con ese nombre
 
         if (book != null) {
-            return book;
+            return bookMapper.toDto(book);
         }
 
         List<BookDto> apiGutendexBook = client.requestBook(title);// guardo en la variable la información obtenida desde el client
@@ -62,13 +64,14 @@ public class BookServiceImpl implements BookService {
 
 
         newBook.setAuthors(managedAuthors);
-        bookRepository.save(newBook);// envia el libro optenido desde la api externa para guardarlo en la base de datos por medio del repository
+        Book savedBook = bookRepository.save(newBook);// envia el libro optenido desde la api externa para guardarlo en la base de datos por medio del repository
 
 
-        return newBook;
+        return bookMapper.toDto(savedBook);
     }
 
     // mostrar libros registrados
+    @Transactional
     @Override
     public List<BookDto> showBooks() {
         List<Book> databaseQuery = bookRepository.findAll();
@@ -116,10 +119,20 @@ public class BookServiceImpl implements BookService {
     }
 
     // mostrar libros por idioma
+    @Transactional
     @Override
-    public List<BookDto> showBooksByLanguage(String language) {
+    public List<BookDto> showBooksByLanguages(String languages) {
 
+        List<Book> searchedBooksLanguages = bookRepository.findByLanguagesContaining(languages);
+    if (searchedBooksLanguages.isEmpty()) {
+        throw new EntityNotFoundException("No hay libros registrados con ese lenguaje");
+    }
 
+        List<BookDto> filteredBookLanguages = searchedBooksLanguages.stream()
+                .map(bookMapper::toDto)
+                .collect(Collectors.toList());
+
+    return filteredBookLanguages;
     }
 
 }

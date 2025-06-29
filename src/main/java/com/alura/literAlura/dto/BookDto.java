@@ -1,14 +1,13 @@
 package com.alura.literAlura.dto;
 
 
-import com.alura.literAlura.entity.Author;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +27,5 @@ public class BookDto {
     private List<String> languages;
     private Map<String, String> formats;
     private String image;
-
-
-    @JsonProperty("name")
-    private String name;
-    @JsonProperty("birth_year")
-    private int birthyear;
-    @JsonProperty("death_year")
-    private int deathyear;
-
 
 }

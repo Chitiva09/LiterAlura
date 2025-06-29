@@ -1,7 +1,6 @@
 package com.alura.literAlura.dto;
 
 
-import com.alura.literAlura.entity.Author;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,4 +18,6 @@ public class AuthorDto {
     private int deathyear;
 
     private List<String> authorBooks;
+
+    private String booksAsString;
 }
